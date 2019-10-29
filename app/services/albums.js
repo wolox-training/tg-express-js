@@ -17,8 +17,8 @@ const listAlbums = () => {
   });
 };
 
-const listPhotos = () => {
-  options.uri = `${base_uri}/photos`;
+const listAlbumPhotos = albumId => {
+  options.uri = `${base_uri}/albums/${albumId}/photos`;
 
   return rp(options).catch(() => {
     throw errors.externalApiError('Error in external API');
@@ -27,5 +27,5 @@ const listPhotos = () => {
 
 module.exports = {
   listAlbums,
-  listPhotos
+  listAlbumPhotos
 };
