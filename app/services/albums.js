@@ -1,7 +1,8 @@
 const rp = require('request-promise');
 const errors = require('../errors');
+const config = require('../../config/index');
 
-const base_uri = 'https://jsonplaceholder.typicode.com';
+const base_uri = config.common.api.jsonPlaceholderBaseUri;
 
 const options = {
   headers: { 'User-Agent': 'Request-Promise' },
