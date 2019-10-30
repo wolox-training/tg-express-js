@@ -1,10 +1,9 @@
-const snakeCaseKeys = require('snakecase-keys');
 const albumsService = require('../services/albums');
 
 const listAlbums = (_, res) => {
   albumsService
     .listAlbums()
-    .then(albums => res.send({ albums: albums.map(snakeCaseKeys) }))
+    .then(albums => res.send({ albums }))
     .catch(error => error);
 };
 
@@ -12,7 +11,7 @@ const listAlbumPhotos = (req, res) => {
   const albumId = req.params.id;
   albumsService
     .listAlbumPhotos(albumId)
-    .then(albumPhotos => res.send({ album_photos: albumPhotos.map(snakeCaseKeys) }))
+    .then(albumPhotos => res.send({ albumPhotos }))
     .catch(error => error);
 };
 
