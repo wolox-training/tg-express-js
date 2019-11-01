@@ -1,6 +1,6 @@
 const albumsService = require('../services/albums');
 const albumsSerializer = require('../serializers/albums');
-const albumPhotosSerializer = require('../serializers/album_photos');
+const albumPhotosSerializer = require('../serializers/album-photos');
 
 const listAlbums = (_, res, next) =>
   albumsService
