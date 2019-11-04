@@ -9,6 +9,7 @@ const statusCodes = {
   [errors.INVALID_PASSWORD_ERROR]: 422,
   [errors.INVALID_EMAIL_ERROR]: 422,
   [errors.EXTERNAL_API_ERROR]: 500,
+  [errors.HASH_ERROR]: 500,
   [errors.DEFAULT_ERROR]: 500
 };
 

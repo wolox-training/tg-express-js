@@ -20,3 +20,6 @@ exports.invalidPasswordError = message => internalError(message, exports.INVALID
 
 exports.USER_EXISTS_ERROR = 'user_exists_error';
 exports.userExistsError = message => internalError(message, exports.USER_EXISTS_ERROR);
+
+exports.HASH_ERROR = 'hash_error';
+exports.userExistsError = message => internalError(message, exports.HASH_ERROR);
