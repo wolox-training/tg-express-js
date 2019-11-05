@@ -1,7 +1,7 @@
 const models = require('../models/index');
 const logger = require('../logger');
 const errors = require('../errors');
-const hash = require('../helpers/hash');
+const { hash } = require('../helpers/utils');
 
 const signUp = user =>
   hash(user.password, 10).then(hashed_password => {

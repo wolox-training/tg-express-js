@@ -1,5 +1,4 @@
-const isEmailValid = require('../helpers/is-email-valid');
-const isPasswordValid = require('../helpers/is-password-valid');
+const { isPasswordValid, isEmailValid } = require('../helpers/utils');
 const usersService = require('../services/users');
 const errors = require('../errors');
 const userSignUpResponse = require('../serializers/user-sign-up-response');
