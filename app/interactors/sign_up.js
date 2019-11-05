@@ -1,8 +1,8 @@
 const { isPasswordValid, isEmailValid } = require('../helpers/utils');
 const usersService = require('../services/users');
 const errors = require('../errors');
-const userSignUpResponse = require('../serializers/user-sign-up-response');
-const userSignUpRequest = require('../serializers/user-sign-up-request');
+const userSignUpResponse = require('../serializers/user_sign_up_response');
+const userSignUpRequest = require('../serializers/user_sign_up_request');
 
 module.exports = user => {
   const parsedUser = userSignUpRequest(user);

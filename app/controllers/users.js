@@ -1,4 +1,4 @@
-const signUpInteractor = require('../interactors/sign-up');
+const signUpInteractor = require('../interactors/sign_up');
 
 const signUp = (req, res, next) => {
   const { user } = req.body;
