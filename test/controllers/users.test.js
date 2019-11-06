@@ -1,10 +1,11 @@
 const supertest = require('supertest');
 const app = require('../../app');
-const models = require('../../app/models');
+const models = require('../../app/models/index');
+const { factory } = require('../factory/users');
 
 const request = supertest(app);
 
-const buildUser = ({ email = 'test@wolox.com.ar', password = '12345678' }) => ({
+const userAttributes = ({ email = 'test@wolox.com.ar', password = '12345678' }) => ({
   first_name: 'First',
   last_name: 'Last',
   password,
@@ -12,57 +13,57 @@ const buildUser = ({ email = 'test@wolox.com.ar', password = '12345678' }) => ({
 });
 
 describe('usersController.signUp', () => {
-  it('succeeds and creates a user', done => {
-    const user = buildUser({});
-    request
+  it('succeeds and creates a user', () => {
+    const user = userAttributes({});
+    return request
       .post('/users')
       .send({ user })
       .expect(200)
-      .end(done);
-
-    const createdUser = models.users.findOne({ where: { email: user.email } });
-    expect(createdUser).not.toBeNull();
+      .then(() =>
+        models.users.findOne({ where: { email: user.email } }).then(createdUser => {
+          expect(createdUser).toHaveProperty('email', user.email);
+          expect(createdUser).toHaveProperty('firstName', user.first_name);
+          expect(createdUser).toHaveProperty('lastName', user.last_name);
+        })
+      );
   });
 
-  it('fails due to invalid password', done => {
-    const user = buildUser({ password: '1234567' });
-    request
+  it('fails due to invalid password', () => {
+    const user = userAttributes({ password: '1234567' });
+    return request
       .post('/users')
       .send({ user })
       .expect(422)
       .then(response => {
         expect(response.body.internal_code).toBe('invalid_password_error');
-        done();
       });
   });
 
-  it('fails due to invalid email', done => {
-    const user = buildUser({ email: 'test@wolo.com.ar' });
-    request
+  it('fails due to invalid email', () => {
+    const user = userAttributes({ email: 'test@wolo.com.ar' });
+    return request
       .post('/users')
       .send({ user })
       .expect(422)
       .then(response => {
         expect(response.body.internal_code).toBe('invalid_email_error');
-        done();
       });
   });
 
-  it('fails due to already existing user', done => {
-    const user = buildUser({});
-    request
-      .post('/users')
-      .send({ user })
-      .expect(200)
-      .then(() => {
-        request
-          .post('/users')
-          .send({ user })
-          .expect(500)
-          .then(response => {
-            expect(response.body.internal_code).toBe('user_exists_error');
-            done();
-          });
-      });
-  });
+  it('fails due to already existing user', () =>
+    factory.create('user').then(createdUser => {
+      const user = {
+        email: createdUser.email,
+        password: createdUser.password,
+        first_name: createdUser.firstName,
+        last_name: createdUser.lastName
+      };
+
+      return request
+        .post('/users')
+        .send({ user })
+        .then(response => {
+          expect(response.body.internal_code).toBe('user_exists_error');
+        });
+    }));
 });
