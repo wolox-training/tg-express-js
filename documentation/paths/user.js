@@ -1,37 +1,9 @@
 module.exports = {
   '/users': {
-    get: {
-      tags: ['CRUD operations'],
-      description: 'Get users',
-      operationId: 'getUsers',
-      parameters: [
-        {
-          name: 'page',
-          in: 'query',
-          schema: {
-            type: 'integer',
-            default: 1
-          },
-          required: false
-        }
-      ],
-      responses: {
-        200: {
-          description: 'Users were obtained',
-          content: {
-            'application/json': {
-              schema: {
-                $ref: '#/components/schemas/Users'
-              }
-            }
-          }
-        }
-      }
-    },
     post: {
       tags: ['CRUD operations'],
-      description: 'Create user',
-      operationId: 'createUser',
+      description: 'Sign Up user',
+      operationId: 'signUp',
       parameters: [],
       requestBody: {
         content: {
@@ -47,8 +19,8 @@ module.exports = {
         200: {
           description: 'New user was created'
         },
-        400: {
-          description: 'Invalid parameters',
+        409: {
+          description: 'User already exists',
           content: {
             'application/json': {
               schema: {
@@ -56,7 +28,21 @@ module.exports = {
               },
               example: {
                 message: 'User´s email already exists',
-                internal_code: 'invalid_parameters'
+                internal_code: 'user_exists_error'
+              }
+            }
+          }
+        },
+        422: {
+          description: 'Invalid parameters',
+          content: {
+            'application/json': {
+              schema: {
+                $ref: '#/components/schemas/Error'
+              },
+              example: {
+                message: 'Password must be alphanumeric and have a length of 8 or more characters',
+                internal_code: 'user_exists_error'
               }
             }
           }
