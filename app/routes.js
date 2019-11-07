@@ -6,7 +6,7 @@ const documentation = require('../documentation');
 
 exports.init = app => {
   app.get('/health', healthCheck);
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(documentation));
+  app.use('/api_docs', swaggerUi.serve, swaggerUi.setup(documentation));
 
   app.get('/albums', albumsController.listAlbums);
   app.get('/albums/:id/photos', albumsController.listAlbumPhotos);
