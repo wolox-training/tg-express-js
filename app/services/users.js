@@ -1,6 +1,7 @@
 const models = require('../models/index');
 const logger = require('../logger');
 const errors = require('../errors');
+const { hash } = require('../helpers/utils');
 
 const findByEmail = email =>
   models.users.findOne({ where: { email } }).catch(error => {
@@ -12,15 +13,19 @@ const signUp = user =>
     if (foundUser) {
       throw errors.userExistsError('User already exists');
     }
-    return models.users
-      .create(user)
-      .then(createdUser => {
-        logger.info(`New user created: ${createdUser.email}`);
-        return createdUser;
-      })
-      .catch(error => {
-        throw errors.databaseError(error.message);
-      });
+
+    return hash(user.password).then(hashedPassword => {
+      user.password = hashedPassword;
+      return models.users
+        .create(user)
+        .then(createdUser => {
+          logger.info(`New user created: ${createdUser.email}`);
+          return createdUser;
+        })
+        .catch(error => {
+          throw errors.databaseError(error.message);
+        });
+    });
   });
 
 module.exports = {
