@@ -23,3 +23,6 @@ exports.userExistsError = message => internalError(message, exports.USER_EXISTS_
 
 exports.HASH_ERROR = 'hash_error';
 exports.hashError = message => internalError(message, exports.HASH_ERROR);
+
+exports.USER_DOES_NOT_EXIST_ERROR = 'user_does_not_exist_error';
+exports.userDoesNotExistError = message => internalError(message, exports.USER_DOES_NOT_EXIST_ERROR);
