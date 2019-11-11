@@ -18,8 +18,11 @@ const hash = str => {
   });
 };
 
+const comparePassword = bcrypt.compare;
+
 module.exports = {
   hash,
   validatePassword,
+  comparePassword,
   validateEmail
 };
