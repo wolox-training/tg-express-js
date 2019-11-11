@@ -1,7 +1,9 @@
+const jwt = require('jsonwebtoken');
 const models = require('../models/index');
 const logger = require('../logger');
 const errors = require('../errors');
-const { hash } = require('../helpers/utils');
+const { hash, comparePassword } = require('../helpers/utils');
+const config = require('../../config');
 
 const findByEmail = email =>
   models.users.findOne({ where: { email } }).catch(error => {
@@ -28,7 +30,32 @@ const signUp = user =>
     });
   });
 
+const createToken = email => {
+  const token = jwt.sign({ email }, config.common.session.secret, { expiresIn: '24h' });
+  return {
+    success: true,
+    message: 'Authentication successful',
+    token
+  };
+};
+
+const signIn = user =>
+  findByEmail(user.email).then(foundUser => {
+    if (!foundUser) {
+      throw errors.userDoesNotExistError('User already exists');
+    }
+
+    return comparePassword(user.password, foundUser.password).then(passwordMatches => {
+      if (!passwordMatches) {
+        throw errors.incorrectPasswordError('Incorrect password');
+      }
+
+      return createToken(user.email);
+    });
+  });
+
 module.exports = {
   signUp,
+  signIn,
   findByEmail
 };
