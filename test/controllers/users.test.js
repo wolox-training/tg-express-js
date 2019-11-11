@@ -67,3 +67,27 @@ describe('usersController.signUp', () => {
         });
     }));
 });
+
+describe('usersController.signIn', () => {
+  it('fails due to an incorrect password', () =>
+    factory.create('user', { password: '12345678' }).then(createdUser => {
+      const { email } = createdUser;
+      return request
+        .post('/users/sessions')
+        .send({ user: { email, password: '123456786' } })
+        .expect(422);
+    }));
+
+  it('fails due to user not existing', done => {
+    const user = {
+      email: 'nonexistent@wolox.com',
+      password: '123456789'
+    };
+
+    return request
+      .post('/users/sessions')
+      .send({ user })
+      .expect(409)
+      .end(done);
+  });
+});
