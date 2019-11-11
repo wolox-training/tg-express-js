@@ -3,7 +3,7 @@ const { healthCheck } = require('./controllers/healthCheck');
 const albumsController = require('./controllers/albums');
 const usersController = require('./controllers/users');
 const documentation = require('../documentation');
-const signUpMiddleware = require('./middlewares/sign_up');
+const usersMiddleware = require('./middlewares/users');
 
 exports.init = app => {
   app.get('/health', healthCheck);
@@ -12,5 +12,6 @@ exports.init = app => {
   app.get('/albums', albumsController.listAlbums);
   app.get('/albums/:id/photos', albumsController.listAlbumPhotos);
 
-  app.post('/users', [signUpMiddleware], usersController.signUp);
+  app.post('/users', [usersMiddleware], usersController.signUp);
+  app.post('/users/sessions', [usersMiddleware], usersController.signIn);
 };
