@@ -54,7 +54,7 @@ describe('usersController.signUp', () => {
     factory.create('user').then(createdUser => {
       const user = {
         email: createdUser.email,
-        password: createdUser.password,
+        password: '12345678',
         first_name: createdUser.firstName,
         last_name: createdUser.lastName
       };
@@ -69,6 +69,20 @@ describe('usersController.signUp', () => {
 });
 
 describe('usersController.signIn', () => {
+  it('signs in a user', () =>
+    factory.create('user', { password: '12345678' }).then(createdUser => {
+      const { email } = createdUser;
+      return request
+        .post('/users/sessions')
+        .send({ user: { email, password: '12345678' } })
+        .expect(200)
+        .then(response => {
+          expect(response.body).toHaveProperty('success', true);
+          expect(response.body).toHaveProperty('message', 'Authentication successful');
+          expect(response.body).toHaveProperty('token');
+        });
+    }));
+
   it('fails due to an incorrect password', () =>
     factory.create('user', { password: '12345678' }).then(createdUser => {
       const { email } = createdUser;
