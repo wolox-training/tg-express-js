@@ -33,10 +33,7 @@ describe('usersController.signUp', () => {
     return request
       .post('/users')
       .send({ user })
-      .expect(422)
-      .then(response => {
-        expect(response.body.internal_code).toBe('invalid_password_error');
-      });
+      .expect(422);
   });
 
   it('fails due to invalid email', () => {
@@ -44,10 +41,7 @@ describe('usersController.signUp', () => {
     return request
       .post('/users')
       .send({ user })
-      .expect(422)
-      .then(response => {
-        expect(response.body.internal_code).toBe('invalid_email_error');
-      });
+      .expect(422);
   });
 
   it('fails due to already existing user', () =>
@@ -62,6 +56,7 @@ describe('usersController.signUp', () => {
       return request
         .post('/users')
         .send({ user })
+        .expect(409)
         .then(response => {
           expect(response.body.internal_code).toBe('user_exists_error');
         });
