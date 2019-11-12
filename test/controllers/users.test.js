@@ -89,7 +89,7 @@ describe('usersController.signIn', () => {
       return request
         .post('/users/sessions')
         .send({ user: { email, password: '123456786' } })
-        .expect(422);
+        .expect(401);
     }));
 
   it('fails due to user not existing', done => {

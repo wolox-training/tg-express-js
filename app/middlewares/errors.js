@@ -9,7 +9,7 @@ const statusCodes = {
   [errors.USER_DOES_NOT_EXIST_ERROR]: 409,
   [errors.INVALID_PASSWORD_ERROR]: 422,
   [errors.INVALID_EMAIL_ERROR]: 422,
-  [errors.INCORRECT_PASSWORD_ERROR]: 422,
+  [errors.INCORRECT_PASSWORD_ERROR]: 401,
   [errors.EXTERNAL_API_ERROR]: 500,
   [errors.HASH_ERROR]: 500,
   [errors.DEFAULT_ERROR]: 500
