@@ -1,9 +1,7 @@
-const jwt = require('jsonwebtoken');
 const models = require('../models/index');
 const logger = require('../logger');
 const errors = require('../errors');
-const { hash, comparePassword } = require('../helpers/utils');
-const config = require('../../config');
+const { hash, comparePassword, createToken } = require('../helpers/utils');
 
 const findByEmail = email =>
   models.users.findOne({ where: { email } }).catch(error => {
@@ -29,15 +27,6 @@ const signUp = user =>
         });
     });
   });
-
-const createToken = email => {
-  const token = jwt.sign({ email }, config.common.session.secret, { expiresIn: '24h' });
-  return {
-    success: true,
-    message: 'Authentication successful',
-    token
-  };
-};
 
 const signIn = user =>
   findByEmail(user.email).then(foundUser => {

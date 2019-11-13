@@ -1,5 +1,7 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const errors = require('../errors');
+const config = require('../../config');
 
 const hash = str => {
   const HASH_SALT = 10;
@@ -10,7 +12,17 @@ const hash = str => {
 
 const comparePassword = bcrypt.compare;
 
+const createToken = payload => {
+  const token = jwt.sign({ payload }, config.common.session.secret, { expiresIn: '24h' });
+  return {
+    success: true,
+    message: 'Authentication successful',
+    token
+  };
+};
+
 module.exports = {
   hash,
-  comparePassword
+  comparePassword,
+  createToken
 };
