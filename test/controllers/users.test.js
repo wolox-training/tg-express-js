@@ -12,6 +12,15 @@ const userAttributes = ({ email = 'test@wolox.com.ar', password = '12345678' }) 
   email
 });
 
+const createAndSignInUser = () =>
+  factory.create('user', { password: '12345678' }).then(createdUser => {
+    const { email } = createdUser;
+    return request
+      .post('/users/sessions')
+      .send({ user: { email, password: '12345678' } })
+      .then(response => response.token);
+  });
+
 describe('usersController.signUp', () => {
   it('succeeds and creates a user', () => {
     const user = userAttributes({});
@@ -99,4 +108,29 @@ describe('usersController.signIn', () => {
       .expect(409)
       .end(done);
   });
+});
+
+describe('usersController.listAllUsers', () => {
+  const limit = 10;
+  const page = 0;
+  const uri = `/users?page=${page}&limit=${limit}`;
+  const authorization = token => `Bearer ${token}`;
+
+  it('returns a page of users', () =>
+    createAndSignInUser().then(token =>
+      request
+        .get(uri)
+        .set('Authorization', authorization(token))
+        .expect(200)
+        .then(response => {
+          const { users } = response.body;
+          expect(users.length).toBe(limit);
+          users.forEach(user => {
+            expect(user).toHaveProperty('first_name');
+            expect(user).toHaveProperty('last_name');
+            expect(user).toHaveProperty('id');
+            expect(user).toHaveProperty('email');
+          });
+        })
+    ));
 });
