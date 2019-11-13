@@ -3,6 +3,9 @@ const jwt = require('jsonwebtoken');
 const errors = require('../errors');
 const config = require('../../config');
 
+const DEFAULT_PAGE = 0;
+const DEFAULT_LIMIT = 10;
+
 const hash = str => {
   const HASH_SALT = 10;
   return bcrypt.hash(str, HASH_SALT).catch(error => {
@@ -21,7 +24,7 @@ const createToken = payload => {
   };
 };
 
-const paginate = (page, limit) => {
+const paginate = (page = DEFAULT_PAGE, limit = DEFAULT_LIMIT) => {
   const offset = page * limit;
 
   return {
