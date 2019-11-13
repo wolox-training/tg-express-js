@@ -3,6 +3,7 @@ const usersService = require('../services/users');
 const userSignUpRequest = require('../serializers/user_sign_up_request');
 const userSignUpResponse = require('../serializers/user_sign_up_response');
 const userSignInRequest = require('../serializers/user_sign_in_request');
+const signInInteractor = require('../interactors/sign_in');
 
 const signUp = (req, res, next) => {
   const { user } = req.body;
@@ -14,8 +15,7 @@ const signUp = (req, res, next) => {
 
 const signIn = (req, res, next) => {
   const { user } = req.body;
-  return usersService
-    .signIn(userSignInRequest(user))
+  return signInInteractor(userSignInRequest(user))
     .then(response => res.send(response))
     .catch(next);
 };
