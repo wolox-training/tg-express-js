@@ -10,6 +10,7 @@ const statusCodes = {
   [errors.INCORRECT_PASSWORD_ERROR]: 401,
   [errors.EXTERNAL_API_ERROR]: 500,
   [errors.HASH_ERROR]: 500,
+  [errors.SCHEMA_ERROR]: 422,
   [errors.DEFAULT_ERROR]: 500
 };
 

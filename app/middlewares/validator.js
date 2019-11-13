@@ -1,4 +1,5 @@
 const { checkSchema, validationResult } = require('express-validator');
+const errors = require('../errors');
 
 const validate = (req, res, next) => {
   const validationErrors = validationResult(req);
@@ -8,9 +9,7 @@ const validate = (req, res, next) => {
   const extractedErrors = [];
   validationErrors.array().map(err => extractedErrors.push({ [err.param]: err.msg }));
 
-  return res.status(422).json({
-    validationErrors: extractedErrors
-  });
+  throw errors.schemaError({ validationErrors: extractedErrors });
 };
 
 const validateSchemaAndFail = schema => [checkSchema(schema), validate];

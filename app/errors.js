@@ -23,3 +23,6 @@ exports.userDoesNotExistError = message => internalError(message, exports.USER_D
 
 exports.INCORRECT_PASSWORD_ERROR = 'incorrect_password_error';
 exports.incorrectPasswordError = message => internalError(message, exports.INCORRECT_PASSWORD_ERROR);
+
+exports.SCHEMA_ERROR = 'schema_error';
+exports.schemaError = message => internalError(message, exports.SCHEMA_ERROR);
