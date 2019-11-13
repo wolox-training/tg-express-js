@@ -21,8 +21,18 @@ const createToken = payload => {
   };
 };
 
+const paginate = (page, limit) => {
+  const offset = page * limit;
+
+  return {
+    offset,
+    limit
+  };
+};
+
 module.exports = {
   hash,
   comparePassword,
+  paginate,
   createToken
 };
