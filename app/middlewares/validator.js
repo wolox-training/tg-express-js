@@ -13,4 +13,4 @@ const validate = (req, res, next) => {
 
 const validateSchemaAndFail = schema => [checkSchema(schema), validate];
 
-module.exports = { validate, validateSchemaAndFail };
+module.exports = { validateSchemaAndFail };
