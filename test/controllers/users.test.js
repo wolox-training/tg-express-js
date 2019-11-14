@@ -33,10 +33,7 @@ describe('usersController.signUp', () => {
     return request
       .post('/users')
       .send({ user })
-      .expect(422)
-      .then(response => {
-        expect(response.body.internal_code).toBe('invalid_password_error');
-      });
+      .expect(422);
   });
 
   it('fails due to invalid email', () => {
@@ -44,17 +41,14 @@ describe('usersController.signUp', () => {
     return request
       .post('/users')
       .send({ user })
-      .expect(422)
-      .then(response => {
-        expect(response.body.internal_code).toBe('invalid_email_error');
-      });
+      .expect(422);
   });
 
   it('fails due to already existing user', () =>
     factory.create('user').then(createdUser => {
       const user = {
         email: createdUser.email,
-        password: createdUser.password,
+        password: '12345678',
         first_name: createdUser.firstName,
         last_name: createdUser.lastName
       };
@@ -62,8 +56,47 @@ describe('usersController.signUp', () => {
       return request
         .post('/users')
         .send({ user })
+        .expect(409)
         .then(response => {
           expect(response.body.internal_code).toBe('user_exists_error');
         });
     }));
+});
+
+describe('usersController.signIn', () => {
+  it('signs in a user', () =>
+    factory.create('user', { password: '12345678' }).then(createdUser => {
+      const { email } = createdUser;
+      return request
+        .post('/users/sessions')
+        .send({ user: { email, password: '12345678' } })
+        .expect(200)
+        .then(response => {
+          expect(response.body).toHaveProperty('success', true);
+          expect(response.body).toHaveProperty('message', 'Authentication successful');
+          expect(response.body).toHaveProperty('token');
+        });
+    }));
+
+  it('fails due to an incorrect password', () =>
+    factory.create('user', { password: '12345678' }).then(createdUser => {
+      const { email } = createdUser;
+      return request
+        .post('/users/sessions')
+        .send({ user: { email, password: '123456786' } })
+        .expect(401);
+    }));
+
+  it('fails due to user not existing', done => {
+    const user = {
+      email: 'nonexistent@wolox.com',
+      password: '123456789'
+    };
+
+    return request
+      .post('/users/sessions')
+      .send({ user })
+      .expect(409)
+      .end(done);
+  });
 });
