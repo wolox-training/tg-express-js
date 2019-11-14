@@ -2,9 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const errors = require('../errors');
 const config = require('../../config');
-
-const DEFAULT_PAGE = 0;
-const DEFAULT_LIMIT = 10;
+const { DEFAULT_PAGE, DEFAULT_LIMIT } = require('./constants');
 
 const hash = str => {
   const HASH_SALT = 10;
