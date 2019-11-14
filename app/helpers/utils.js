@@ -23,7 +23,7 @@ const createToken = payload => {
 };
 
 const paginate = (page = DEFAULT_PAGE, limit = DEFAULT_LIMIT) => {
-  const offset = page * limit;
+  const offset = (page - 1) * limit;
 
   return {
     offset,
