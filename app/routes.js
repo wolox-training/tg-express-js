@@ -16,5 +16,9 @@ exports.init = app => {
 
   app.post('/users', [validateSchemaAndFail(userSchemas.signUp)], usersController.signUp);
   app.post('/users/sessions', [validateSchemaAndFail(userSchemas.signIn)], usersController.signIn);
-  app.get('/users', [authenticateUser], usersController.listAllUsers);
+  app.get(
+    '/users',
+    [validateSchemaAndFail(userSchemas.listAllUsers), authenticateUser],
+    usersController.listAllUsers
+  );
 };
