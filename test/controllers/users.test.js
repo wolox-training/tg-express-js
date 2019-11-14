@@ -113,7 +113,7 @@ describe('usersController.signIn', () => {
 describe('usersController.listAllUsers', () => {
   const amountOfUsers = 15;
   const limit = 10;
-  const page = 0;
+  const page = 1;
   const uri = `/users?page=${page}&limit=${limit}`;
   const authorization = token => `Bearer ${token}`;
 

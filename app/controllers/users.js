@@ -17,11 +17,13 @@ const signIn = (req, res, next) => {
     .catch(next);
 };
 
-const listAllUsers = (req, res, next) =>
-  usersService
-    .listAllUsers(req.query.page, req.query.limit)
-    .then(users => res.send(serializers.userList(users)))
+const listAllUsers = (req, res, next) => {
+  const { page, limit } = req.query;
+  return usersService
+    .listAllUsers(page, limit)
+    .then(users => res.send(serializers.userList(users, page, limit)))
     .catch(next);
+};
 
 module.exports = {
   signUp,

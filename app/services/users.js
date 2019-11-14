@@ -29,7 +29,7 @@ const signUp = user =>
   });
 
 const listAllUsers = (page, limit) =>
-  models.users.findAll({ ...paginate(page, limit) }).catch(err => {
+  models.users.findAndCountAll({ ...paginate(page, limit) }).catch(err => {
     throw errors.databaseError(err);
   });
 

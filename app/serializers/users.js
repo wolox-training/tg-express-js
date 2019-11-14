@@ -21,13 +21,16 @@ const signInRequest = user => ({
   password: user.password
 });
 
-const userList = users => ({
-  users: users.map(user => ({
+const userList = ({ count, rows }, page) => ({
+  users: rows.map(user => ({
     id: user.id,
     first_name: user.firstName,
     last_name: user.lastName,
     email: user.email
-  }))
+  })),
+  total_count: count,
+  page,
+  count: rows.length
 });
 
 module.exports = {
