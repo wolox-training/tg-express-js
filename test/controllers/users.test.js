@@ -18,7 +18,7 @@ const createAndSignInUser = () =>
     return request
       .post('/users/sessions')
       .send({ user: { email, password: '12345678' } })
-      .then(response => response.token);
+      .then(response => response.body.token);
   });
 
 describe('usersController.signUp', () => {
@@ -111,26 +111,36 @@ describe('usersController.signIn', () => {
 });
 
 describe('usersController.listAllUsers', () => {
+  const amountOfUsers = 15;
   const limit = 10;
   const page = 0;
   const uri = `/users?page=${page}&limit=${limit}`;
   const authorization = token => `Bearer ${token}`;
 
   it('returns a page of users', () =>
-    createAndSignInUser().then(token =>
-      request
-        .get(uri)
-        .set('Authorization', authorization(token))
-        .expect(200)
-        .then(response => {
-          const { users } = response.body;
-          expect(users.length).toBe(limit);
-          users.forEach(user => {
-            expect(user).toHaveProperty('first_name');
-            expect(user).toHaveProperty('last_name');
-            expect(user).toHaveProperty('id');
-            expect(user).toHaveProperty('email');
-          });
-        })
+    factory.createMany('user', amountOfUsers).then(() =>
+      createAndSignInUser().then(token =>
+        request
+          .get(uri)
+          .set('Authorization', authorization(token))
+          .expect(200)
+          .then(response => {
+            const { users } = response.body;
+            expect(users.length).toBe(limit);
+            users.forEach(user => {
+              expect(user).toHaveProperty('first_name');
+              expect(user).toHaveProperty('last_name');
+              expect(user).toHaveProperty('id');
+              expect(user).toHaveProperty('email');
+            });
+          })
+      )
     ));
+
+  it('fails due to unauthorized access', done =>
+    request
+      .get(uri)
+      .set('Authorization', 'Bearer asdfasdfsf')
+      .expect(401)
+      .end(done));
 });

@@ -26,3 +26,6 @@ exports.incorrectPasswordError = message => internalError(message, exports.INCOR
 
 exports.SCHEMA_ERROR = 'schema_error';
 exports.schemaError = message => internalError(message, exports.SCHEMA_ERROR);
+
+exports.UNAUTHENTICATED_USER_ERROR = 'unauthenticated_user_error';
+exports.unauthenticatedUserError = message => internalError(message, exports.UNAUTHENTICATED_USER_ERROR);
