@@ -1,7 +1,7 @@
 const models = require('../models/index');
 const logger = require('../logger');
 const errors = require('../errors');
-const { hash } = require('../helpers/utils');
+const { hash, paginate } = require('../helpers/utils');
 
 const findByEmail = email =>
   models.users.findOne({ where: { email } }).catch(error => {
@@ -28,7 +28,13 @@ const signUp = user =>
     });
   });
 
+const listAllUsers = (page, limit) =>
+  models.users.findAndCountAll({ ...paginate(page, limit) }).catch(err => {
+    throw errors.databaseError(err);
+  });
+
 module.exports = {
   signUp,
-  findByEmail
+  findByEmail,
+  listAllUsers
 };

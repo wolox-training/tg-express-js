@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const errors = require('../errors');
 const config = require('../../config');
+const { DEFAULT_PAGE, DEFAULT_LIMIT } = require('./constants');
 
 const hash = str => {
   const HASH_SALT = 10;
@@ -21,8 +22,18 @@ const createToken = payload => {
   };
 };
 
+const paginate = (page = DEFAULT_PAGE, limit = DEFAULT_LIMIT) => {
+  const offset = (page - 1) * limit;
+
+  return {
+    offset,
+    limit
+  };
+};
+
 module.exports = {
   hash,
   comparePassword,
+  paginate,
   createToken
 };

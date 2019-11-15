@@ -1,26 +1,32 @@
 const usersService = require('../services/users');
-
-const userSignUpRequest = require('../serializers/user_sign_up_request');
-const userSignUpResponse = require('../serializers/user_sign_up_response');
-const userSignInRequest = require('../serializers/user_sign_in_request');
+const serializers = require('../serializers/users');
 const signInInteractor = require('../interactors/sign_in');
 
 const signUp = (req, res, next) => {
   const { user } = req.body;
   return usersService
-    .signUp(userSignUpRequest(user))
-    .then(createdUser => res.send(userSignUpResponse(createdUser)))
+    .signUp(serializers.signUpRequest(user))
+    .then(createdUser => res.send(serializers.signUpResponse(createdUser)))
     .catch(next);
 };
 
 const signIn = (req, res, next) => {
   const { user } = req.body;
-  return signInInteractor(userSignInRequest(user))
+  return signInInteractor(serializers.signInRequest(user))
     .then(response => res.send(response))
+    .catch(next);
+};
+
+const listAllUsers = (req, res, next) => {
+  const { page, limit } = req.query;
+  return usersService
+    .listAllUsers(page, limit)
+    .then(users => res.send(serializers.userList(users, page)))
     .catch(next);
 };
 
 module.exports = {
   signUp,
-  signIn
+  signIn,
+  listAllUsers
 };

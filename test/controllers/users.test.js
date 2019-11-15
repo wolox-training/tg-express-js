@@ -12,6 +12,15 @@ const userAttributes = ({ email = 'test@wolox.com.ar', password = '12345678' }) 
   email
 });
 
+const createAndSignInUser = () =>
+  factory.create('user', { password: '12345678' }).then(createdUser => {
+    const { email } = createdUser;
+    return request
+      .post('/users/sessions')
+      .send({ user: { email, password: '12345678' } })
+      .then(response => response.body.token);
+  });
+
 describe('usersController.signUp', () => {
   it('succeeds and creates a user', () => {
     const user = userAttributes({});
@@ -99,4 +108,67 @@ describe('usersController.signIn', () => {
       .expect(409)
       .end(done);
   });
+});
+
+describe('usersController.listAllUsers', () => {
+  const amountOfUsers = 15;
+  const limit = 10;
+  const page = 1;
+  const uri = `/users?page=${page}&limit=${limit}`;
+  const authorization = token => `Bearer ${token}`;
+
+  it('returns a page of users', () =>
+    factory.createMany('user', amountOfUsers).then(() =>
+      createAndSignInUser().then(token =>
+        request
+          .get(uri)
+          .set('Authorization', authorization(token))
+          .expect(200)
+          .then(response => {
+            expect(response.body).toHaveProperty('users');
+            const { users } = response.body;
+            expect(response.body).toHaveProperty('count', users.length);
+            expect(response.body).toHaveProperty('total_count');
+            expect(response.body).toHaveProperty('page', page);
+            expect(users.length).toBe(limit);
+            users.forEach(user => {
+              expect(user).toHaveProperty('first_name');
+              expect(user).toHaveProperty('last_name');
+              expect(user).toHaveProperty('id');
+              expect(user).toHaveProperty('email');
+            });
+          })
+      )
+    ));
+
+  it('returns a page of users with default params', () =>
+    factory.createMany('user', amountOfUsers).then(() =>
+      createAndSignInUser().then(token =>
+        request
+          .get('/users')
+          .set('Authorization', authorization(token))
+          .expect(200)
+          .then(response => {
+            expect(response.body).toHaveProperty('users');
+            const { users } = response.body;
+            expect(response.body).toHaveProperty('count', users.length);
+            expect(response.body).toHaveProperty('total_count');
+            expect(response.body).toHaveProperty('page', page);
+            expect(users.length).toBe(limit);
+            users.forEach(user => {
+              expect(user).toHaveProperty('first_name');
+              expect(user).toHaveProperty('last_name');
+              expect(user).toHaveProperty('id');
+              expect(user).toHaveProperty('email');
+            });
+          })
+      )
+    ));
+
+  it('fails due to unauthorized access', done =>
+    request
+      .get(uri)
+      .set('Authorization', 'Bearer asdfasdfsf')
+      .expect(401)
+      .end(done));
 });

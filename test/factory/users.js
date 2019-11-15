@@ -6,8 +6,8 @@ factory.define(
   'user',
   models.users,
   {
-    firstName: factory.chance('first'),
-    lastName: factory.chance('last'),
+    firstName: factory.chance('first', { nationality: 'en' }),
+    lastName: factory.chance('last', { nationality: 'en' }),
     email: factory.seq('User.email', n => `test${n}@wolox.com.ar`),
     password: factory.chance('string', { length: 8, alpha: true })
   },

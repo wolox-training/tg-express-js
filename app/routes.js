@@ -5,6 +5,7 @@ const usersController = require('./controllers/users');
 const documentation = require('../documentation');
 const { validateSchemaAndFail } = require('./middlewares/validator');
 const userSchemas = require('./schemas').user;
+const authenticateUser = require('./middlewares/authenticator');
 
 exports.init = app => {
   app.get('/health', healthCheck);
@@ -15,4 +16,9 @@ exports.init = app => {
 
   app.post('/users', [validateSchemaAndFail(userSchemas.signUp)], usersController.signUp);
   app.post('/users/sessions', [validateSchemaAndFail(userSchemas.signIn)], usersController.signIn);
+  app.get(
+    '/users',
+    [validateSchemaAndFail(userSchemas.listAllUsers), authenticateUser],
+    usersController.listAllUsers
+  );
 };

@@ -41,7 +41,27 @@ const signUp = {
   }
 };
 
+const listAllUsers = {
+  page: {
+    in: ['query'],
+    optional: true,
+    isInt: {
+      options: { min: 1 },
+      errorMessage: 'page param must be an integer greater than 1'
+    }
+  },
+  limit: {
+    in: ['query'],
+    optional: true,
+    isInt: {
+      options: { min: 1 },
+      errorMessage: 'limit param must be an integer greater than 1'
+    }
+  }
+};
+
 module.exports = {
   signUp,
-  signIn
+  signIn,
+  listAllUsers
 };
