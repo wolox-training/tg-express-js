@@ -1,4 +1,4 @@
-const DEFAULT_PAGE = 0;
+const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 10;
 
 module.exports = {
