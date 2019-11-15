@@ -1,5 +1,5 @@
 # Check if directory has a Gemfile
-if ! ls | grep Gemfile > /dev/null  ; then
+if ! ls Gemfile > /dev/null  ; then
   echo "Project is not a Ruby On Rails project"
   exit
 fi
