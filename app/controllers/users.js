@@ -21,7 +21,7 @@ const listAllUsers = (req, res, next) => {
   const { page, limit } = req.query;
   return usersService
     .listAllUsers(page, limit)
-    .then(users => res.send(serializers.userList(users, page, limit)))
+    .then(users => res.send(serializers.userList(users, page)))
     .catch(next);
 };
 
