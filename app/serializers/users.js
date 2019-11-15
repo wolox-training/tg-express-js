@@ -1,3 +1,5 @@
+const { DEFAULT_PAGE } = require('../helpers/constants');
+
 const signUpResponse = user => ({
   user: {
     id: user.id,
@@ -21,7 +23,7 @@ const signInRequest = user => ({
   password: user.password
 });
 
-const userList = ({ count, rows }, page) => ({
+const userList = ({ count, rows }, page = DEFAULT_PAGE.toString()) => ({
   users: rows.map(user => ({
     id: user.id,
     first_name: user.firstName,
