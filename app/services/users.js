@@ -28,6 +28,19 @@ const signUp = user =>
     });
   });
 
+const createAdminUser = user => {
+  user.isAdmin = true;
+  return models.users
+    .create(user)
+    .then(createdUser => {
+      logger.info(`New admin user created: ${createdUser.email}`);
+      return createdUser;
+    })
+    .catch(error => {
+      throw errors.databaseError(error.message);
+    });
+};
+
 const listAllUsers = (page, limit) =>
   models.users.findAndCountAll({ ...paginate(page, limit) }).catch(err => {
     throw errors.databaseError(err);
@@ -36,5 +49,6 @@ const listAllUsers = (page, limit) =>
 module.exports = {
   signUp,
   findByEmail,
-  listAllUsers
+  listAllUsers,
+  createAdminUser
 };
