@@ -141,6 +141,30 @@ describe('usersController.listAllUsers', () => {
       )
     ));
 
+  it('returns a page of users with default params', () =>
+    factory.createMany('user', amountOfUsers).then(() =>
+      createAndSignInUser().then(token =>
+        request
+          .get('/users')
+          .set('Authorization', authorization(token))
+          .expect(200)
+          .then(response => {
+            expect(response.body).toHaveProperty('users');
+            const { users } = response.body;
+            expect(response.body).toHaveProperty('count', users.length);
+            expect(response.body).toHaveProperty('total_count');
+            expect(response.body).toHaveProperty('page', page.toString());
+            expect(users.length).toBe(limit);
+            users.forEach(user => {
+              expect(user).toHaveProperty('first_name');
+              expect(user).toHaveProperty('last_name');
+              expect(user).toHaveProperty('id');
+              expect(user).toHaveProperty('email');
+            });
+          })
+      )
+    ));
+
   it('fails due to unauthorized access', done =>
     request
       .get(uri)
