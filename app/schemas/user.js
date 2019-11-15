@@ -44,7 +44,7 @@ const signUp = {
 const listAllUsers = {
   page: {
     in: ['query'],
-    optional: {},
+    optional: true,
     isInt: {
       options: { min: 1 },
       errorMessage: 'page param must be an integer greater than 1'
@@ -52,7 +52,7 @@ const listAllUsers = {
   },
   limit: {
     in: ['query'],
-    optional: {},
+    optional: true,
     isInt: {
       options: { min: 1 },
       errorMessage: 'limit param must be an integer greater than 1'
