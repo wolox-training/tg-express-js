@@ -23,7 +23,7 @@ const signInRequest = user => ({
   password: user.password
 });
 
-const userList = ({ count, rows }, page = DEFAULT_PAGE.toString()) => ({
+const userList = ({ count, rows }, page = DEFAULT_PAGE) => ({
   users: rows.map(user => ({
     id: user.id,
     first_name: user.firstName,
@@ -31,7 +31,7 @@ const userList = ({ count, rows }, page = DEFAULT_PAGE.toString()) => ({
     email: user.email
   })),
   total_count: count,
-  page,
+  page: Number(page),
   count: rows.length
 });
 

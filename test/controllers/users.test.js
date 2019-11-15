@@ -129,7 +129,7 @@ describe('usersController.listAllUsers', () => {
             const { users } = response.body;
             expect(response.body).toHaveProperty('count', users.length);
             expect(response.body).toHaveProperty('total_count');
-            expect(response.body).toHaveProperty('page', page.toString());
+            expect(response.body).toHaveProperty('page', page);
             expect(users.length).toBe(limit);
             users.forEach(user => {
               expect(user).toHaveProperty('first_name');
@@ -153,7 +153,7 @@ describe('usersController.listAllUsers', () => {
             const { users } = response.body;
             expect(response.body).toHaveProperty('count', users.length);
             expect(response.body).toHaveProperty('total_count');
-            expect(response.body).toHaveProperty('page', page.toString());
+            expect(response.body).toHaveProperty('page', page);
             expect(users.length).toBe(limit);
             users.forEach(user => {
               expect(user).toHaveProperty('first_name');
