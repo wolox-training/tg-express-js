@@ -7,7 +7,8 @@ const signUpResponse = user => ({
     firstName: user.firstName,
     lastName: user.lastName,
     updatedAt: user.updatedAt,
-    createdAt: user.createdAt
+    createdAt: user.createdAt,
+    isAdmin: user.isAdmin
   }
 });
 
