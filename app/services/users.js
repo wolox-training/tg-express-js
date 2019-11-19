@@ -28,6 +28,17 @@ const signUp = user =>
     });
   });
 
+const updateUser = (user, updateHash) =>
+  user
+    .update(updateHash)
+    .then(result => {
+      logger.info(`Updated: ${user.email} user with ${updateHash}`);
+      return result;
+    })
+    .catch(error => {
+      throw errors.databaseError(error);
+    });
+
 const listAllUsers = (page, limit) =>
   models.users.findAndCountAll({ ...paginate(page, limit) }).catch(err => {
     throw errors.databaseError(err);
@@ -36,5 +47,6 @@ const listAllUsers = (page, limit) =>
 module.exports = {
   signUp,
   findByEmail,
-  listAllUsers
+  listAllUsers,
+  updateUser
 };
