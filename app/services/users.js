@@ -28,18 +28,16 @@ const signUp = user =>
     });
   });
 
-const createAdminUser = user => {
-  user.isAdmin = true;
-  return models.users
-    .create(user)
-    .then(createdUser => {
-      logger.info(`New admin user created: ${createdUser.email}`);
-      return createdUser;
+const updateUser = (user, updateHash) =>
+  user
+    .update(updateHash)
+    .then(result => {
+      logger.info(`Updated: ${user.email} user with ${updateHash}`);
+      return result;
     })
     .catch(error => {
-      throw errors.databaseError(error.message);
+      throw errors.databaseError(error);
     });
-};
 
 const listAllUsers = (page, limit) =>
   models.users.findAndCountAll({ ...paginate(page, limit) }).catch(err => {
@@ -50,5 +48,5 @@ module.exports = {
   signUp,
   findByEmail,
   listAllUsers,
-  createAdminUser
+  updateUser
 };
