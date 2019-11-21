@@ -4,7 +4,6 @@ module.exports = (sequelize, DataTypes) => {
   const Album = sequelize.define(
     'albums',
     {
-      id: DataTypes.INTEGER,
       title: DataTypes.STRING
     },
     {
@@ -14,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
   );
   Album.associate = models => {
     Album.belongsToMany(models.users, {
-      through: 'UserAlbums',
+      through: 'userAlbums',
       as: 'users',
       foreignKey: 'albumId',
       otherKey: 'userId'

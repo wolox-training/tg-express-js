@@ -15,8 +15,8 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   User.associate = models => {
-    User.hasMany(models.albums, {
-      through: 'user_albums',
+    User.belongsToMany(models.albums, {
+      through: 'userAlbums',
       as: 'albums',
       foreignKey: 'userId',
       otherKey: 'albumId'
