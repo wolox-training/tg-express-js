@@ -2,9 +2,25 @@ const supertest = require('supertest');
 const { factory } = require('factory-girl');
 const bcrypt = require('bcrypt');
 const app = require('../../app');
+const albumsServiceMock = require('../../app/services/albums');
 const { factoryAllModels } = require('../factory/factory_by_models');
+const errors = require('../../app/errors');
 
 const request = supertest(app);
+
+jest.unmock('../../app/services/albums');
+
+albumsServiceMock.getInfoById = jest.fn(albumId => {
+  if (albumId >= 1 && albumId <= 100) {
+    return new Promise(resolve => {
+      resolve({
+        id: albumId,
+        title: 'Lorem ipsum'
+      });
+    });
+  }
+  throw errors.externalApiError('Album not found');
+});
 
 factoryAllModels();
 factory.extend(
@@ -54,7 +70,7 @@ describe('albumsController.buyAlbum', () => {
   it('succeeds in buying an album that has been bought', () =>
     factory.create('albums').then(createdAlbum =>
       request
-        .post('/albums/1')
+        .post(`/albums/${createdAlbum.id}`)
         .set('Authorization', authToken)
         .expect(200)
         .then(response => {
@@ -68,7 +84,7 @@ describe('albumsController.buyAlbum', () => {
 
   it('fails due to non-existing album', () =>
     request
-      .post('/albums/10001')
+      .post('/albums/101')
       .set('Authorization', authToken)
       .expect(404)
       .then(response => {
