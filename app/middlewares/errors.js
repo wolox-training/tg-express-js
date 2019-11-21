@@ -12,6 +12,8 @@ const statusCodes = {
   [errors.EXTERNAL_API_ERROR]: 500,
   [errors.HASH_ERROR]: 500,
   [errors.SCHEMA_ERROR]: 422,
+  [errors.EXTERNAL_API_ERROR]: 404,
+  [errors.ALBUM_BOUGHT_BY_USER_ERROR]: 409,
   [errors.DEFAULT_ERROR]: 500
 };
 
