@@ -29,3 +29,6 @@ exports.schemaError = message => internalError(message, exports.SCHEMA_ERROR);
 
 exports.UNAUTHENTICATED_USER_ERROR = 'unauthenticated_user_error';
 exports.unauthenticatedUserError = message => internalError(message, exports.UNAUTHENTICATED_USER_ERROR);
+
+exports.ALBUM_BOUGHT_BY_USER_ERROR = 'album_bought_by_user_error';
+exports.albumBoughtByUserError = message => internalError(message, exports.ALBUM_BOUGHT_BY_USER_ERROR);
