@@ -17,7 +17,7 @@ const listAlbumPhotos = (req, res, next) => {
 };
 
 const buyAlbum = (req, res, next) => {
-  const userId = req.decodedValue;
+  const userId = req.decodedValue.id;
   const albumId = req.params.id;
   return buyAlbumInteractor(albumId, userId)
     .then(result => res.send(serializer.boughtAlbum(result)))

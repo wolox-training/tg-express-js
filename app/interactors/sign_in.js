@@ -14,6 +14,12 @@ module.exports = user =>
         throw errors.incorrectPasswordError('Incorrect password');
       }
       logger.info(`User signed in: ${user.email}`);
-      return createToken(foundUser.id);
+
+      const payload = {
+        id: foundUser.id,
+        email: foundUser.email,
+        isAdmin: foundUser.isAdmin
+      };
+      return createToken(payload);
     });
   });
