@@ -60,7 +60,6 @@ describe('albumsController.buyAlbum', () => {
       .set('Authorization', authToken)
       .expect(200)
       .then(response => {
-        expect(response.body).toHaveProperty('id');
         expect(response.body).toHaveProperty('user_id', authenticatedUser.id);
         expect(response.body).toHaveProperty('album_id', 1);
         expect(response.body).toHaveProperty('created_at');
@@ -74,7 +73,6 @@ describe('albumsController.buyAlbum', () => {
         .set('Authorization', authToken)
         .expect(200)
         .then(response => {
-          expect(response.body).toHaveProperty('id');
           expect(response.body).toHaveProperty('user_id', authenticatedUser.id);
           expect(response.body).toHaveProperty('album_id', createdAlbum.id);
           expect(response.body).toHaveProperty('created_at');
