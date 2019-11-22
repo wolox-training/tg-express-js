@@ -46,10 +46,16 @@ const getInfoById = albumId => {
     });
 };
 
+const findAlbumsForUser = userId =>
+  models.albums.findAll({
+    include: { model: models.users, where: { id: userId }, attributes: [], through: { attributes: [] } }
+  });
+
 module.exports = {
   listAlbums,
   listAlbumPhotos,
   findById,
   getInfoById,
-  createAlbum
+  createAlbum,
+  findAlbumsForUser
 };
