@@ -3,7 +3,7 @@ const albumsService = require('../services/albums');
 const userAlbumsService = require('../services/user_albums');
 
 module.exports = async (albumId, userId) => {
-  const albumBought = await userAlbumsService.albumBoughtByUser(albumId, userId);
+  const albumBought = await userAlbumsService.findUserAlbum(albumId, userId);
   if (albumBought) {
     throw errors.albumBoughtByUserError(`Album ${albumId} already bought by user ${userId}`);
   }
