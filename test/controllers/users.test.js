@@ -28,13 +28,14 @@ const userAttributes = ({ email = 'test@wolox.com.ar', password = '12345678' }) 
   email
 });
 
-const createAndSignInUser = () =>
-  factory.create('woloxUser', { password: '12345678' }).then(createdUser => {
+const createAndSignInUser = options =>
+  factory.create('woloxUser', { ...options, password: '12345678' }).then(createdUser => {
     const { email } = createdUser;
     return request
       .post('/users/sessions')
       .send({ user: { email, password: '12345678' } })
-      .then(response => response.body.token);
+      .then(response => `Bearer ${response.body.token}`)
+      .then(token => ({ createdUser, token }));
   });
 
 describe('usersController.signUp', () => {
@@ -131,14 +132,13 @@ describe('usersController.listAllUsers', () => {
   const limit = 10;
   const page = 1;
   const uri = `/users?page=${page}&limit=${limit}`;
-  const authorization = token => `Bearer ${token}`;
 
   it('returns a page of users', () =>
     factory.createMany('woloxUser', amountOfUsers).then(() =>
-      createAndSignInUser().then(token =>
+      createAndSignInUser().then(({ token }) =>
         request
           .get(uri)
-          .set('Authorization', authorization(token))
+          .set('Authorization', token)
           .expect(200)
           .then(response => {
             expect(response.body).toHaveProperty('users');
@@ -159,10 +159,10 @@ describe('usersController.listAllUsers', () => {
 
   it('returns a page of users with default params', () =>
     factory.createMany('woloxUser', amountOfUsers).then(() =>
-      createAndSignInUser().then(token =>
+      createAndSignInUser().then(({ token }) =>
         request
           .get('/users')
-          .set('Authorization', authorization(token))
+          .set('Authorization', token)
           .expect(200)
           .then(response => {
             expect(response.body).toHaveProperty('users');
