@@ -35,3 +35,6 @@ exports.albumBoughtByUserError = message => internalError(message, exports.ALBUM
 
 exports.UNAUTHORIZED_ERROR = 'unauthorized_error';
 exports.unauthorized_error = message => internalError(message, exports.UNAUTHORIZED_ERROR);
+
+exports.INVALID_SESSION_ERROR = 'invalid_session_error';
+exports.invalidSessionError = message => internalError(message, exports.INVALID_SESSION_ERROR);
