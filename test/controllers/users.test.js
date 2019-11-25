@@ -1,7 +1,23 @@
 const supertest = require('supertest');
+const { factory } = require('factory-girl');
+const bcrypt = require('bcrypt');
 const app = require('../../app');
 const models = require('../../app/models/index');
-const { factory } = require('../factory/users');
+const { factoryByModel } = require('../factory/factory_by_models');
+
+factoryByModel('users');
+factory.extend(
+  'users',
+  'woloxUser',
+  { email: factory.seq('User.email', n => `test${n}@wolox.com.ar`) },
+  {
+    afterBuild: model =>
+      bcrypt.hash(model.password, 10).then(hash => {
+        model.password = hash;
+        return model;
+      })
+  }
+);
 
 const request = supertest(app);
 
@@ -13,7 +29,7 @@ const userAttributes = ({ email = 'test@wolox.com.ar', password = '12345678' }) 
 });
 
 const createAndSignInUser = () =>
-  factory.create('user', { password: '12345678' }).then(createdUser => {
+  factory.create('woloxUser', { password: '12345678' }).then(createdUser => {
     const { email } = createdUser;
     return request
       .post('/users/sessions')
@@ -54,7 +70,7 @@ describe('usersController.signUp', () => {
   });
 
   it('fails due to already existing user', () =>
-    factory.create('user').then(createdUser => {
+    factory.create('woloxUser').then(createdUser => {
       const user = {
         email: createdUser.email,
         password: '12345678',
@@ -74,7 +90,7 @@ describe('usersController.signUp', () => {
 
 describe('usersController.signIn', () => {
   it('signs in a user', () =>
-    factory.create('user', { password: '12345678' }).then(createdUser => {
+    factory.create('woloxUser', { password: '12345678' }).then(createdUser => {
       const { email } = createdUser;
       return request
         .post('/users/sessions')
@@ -88,7 +104,7 @@ describe('usersController.signIn', () => {
     }));
 
   it('fails due to an incorrect password', () =>
-    factory.create('user', { password: '12345678' }).then(createdUser => {
+    factory.create('woloxUser', { password: '12345678' }).then(createdUser => {
       const { email } = createdUser;
       return request
         .post('/users/sessions')
@@ -118,7 +134,7 @@ describe('usersController.listAllUsers', () => {
   const authorization = token => `Bearer ${token}`;
 
   it('returns a page of users', () =>
-    factory.createMany('user', amountOfUsers).then(() =>
+    factory.createMany('woloxUser', amountOfUsers).then(() =>
       createAndSignInUser().then(token =>
         request
           .get(uri)
@@ -142,7 +158,7 @@ describe('usersController.listAllUsers', () => {
     ));
 
   it('returns a page of users with default params', () =>
-    factory.createMany('user', amountOfUsers).then(() =>
+    factory.createMany('woloxUser', amountOfUsers).then(() =>
       createAndSignInUser().then(token =>
         request
           .get('/users')

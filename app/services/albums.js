@@ -1,12 +1,15 @@
 const rp = require('request-promise');
 const errors = require('../errors');
 const config = require('../../config/index');
+const models = require('../models');
 
 const base_uri = config.common.api.jsonPlaceholderBaseUri;
 
 const options = {
-  headers: { 'User-Agent': 'Request-Promise' },
-  json: 'true'
+  headers: {
+    'User-Agent': 'Request-Promise',
+    'Content-Type': 'application/json'
+  }
 };
 
 const listAlbums = () => {
@@ -25,7 +28,33 @@ const listAlbumPhotos = albumId => {
   });
 };
 
+const findById = albumId =>
+  models.albums.findByPk(albumId).catch(() => {
+    throw errors.databaseError('Album not found');
+  });
+
+const createAlbum = albumData =>
+  models.albums.create(albumData).catch(() => {
+    throw errors.databaseError('Could not create album');
+  });
+
+const getInfoById = albumId => {
+  options.uri = `${base_uri}/albums/${albumId}`;
+  return rp(options)
+    .then(result => {
+      const albumData = JSON.parse(result);
+      delete albumData.userId;
+      return albumData;
+    })
+    .catch(() => {
+      throw errors.externalApiError('Album not found');
+    });
+};
+
 module.exports = {
   listAlbums,
-  listAlbumPhotos
+  listAlbumPhotos,
+  findById,
+  getInfoById,
+  createAlbum
 };

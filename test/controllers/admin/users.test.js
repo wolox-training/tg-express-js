@@ -1,7 +1,10 @@
 const supertest = require('supertest');
+const { factory } = require('factory-girl');
 const app = require('../../../app');
 const models = require('../../../app/models/index');
-const { factory } = require('../../factory/users');
+const { factoryByModel } = require('../../factory/factory_by_models');
+
+factoryByModel('users');
 
 const request = supertest(app);
 
@@ -30,7 +33,7 @@ describe('adminUsersController.create', () => {
   });
 
   it('promotes an existing user to admin', () =>
-    factory.create('user').then(createdUser => {
+    factory.create('users', { email: 'test@wolox.com.ar' }).then(createdUser => {
       const user = {
         email: createdUser.email,
         password: '12345678',

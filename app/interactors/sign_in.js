@@ -14,6 +14,6 @@ module.exports = user =>
         throw errors.incorrectPasswordError('Incorrect password');
       }
       logger.info(`User signed in: ${user.email}`);
-      return createToken(user.email);
+      return createToken(foundUser.id);
     });
   });

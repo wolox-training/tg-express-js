@@ -12,7 +12,8 @@ module.exports = (req, res, next) => {
     if (err) {
       return next(errors.unauthenticatedUserError(err));
     }
-    logger.info(`Authenticated! Decoded value: ${decode}`);
+    logger.info(`Authenticated! Decoded value: ${decode.payload}`);
+    req.decodedValue = decode.payload;
     return next();
   });
 };
