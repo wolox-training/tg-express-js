@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../../config');
 const errors = require('../errors');
 const logger = require('../logger');
+const models = require('../models');
 
 module.exports = (req, res, next) => {
   if (!req.headers.authorization) {
@@ -12,8 +13,16 @@ module.exports = (req, res, next) => {
     if (err) {
       return next(errors.unauthenticatedUserError(err));
     }
-    logger.info(`Authenticated! Decoded value: ${decode.payload}`);
-    req.decodedValue = decode.payload;
-    return next();
+
+    const iatDate = new Date(decode.iat * 1000);
+    return models.invalidSessions.findOne({ userId: decode.payload.id }).then(foundSession => {
+      if (foundSession && foundSession.createdAt > iatDate) {
+        return next(errors.invalidSessionError('User session is invalid'));
+      }
+
+      logger.info(`Authenticated! Decoded value: ${decode.payload}`);
+      req.decodedValue = decode.payload;
+      return next();
+    });
   });
 };

@@ -44,9 +44,18 @@ const listAllUsers = (page, limit) =>
     throw errors.databaseError(err);
   });
 
+const invalidateAllSessions = user =>
+  models.invalidSessions
+    .destroy({ where: { userId: user.id } })
+    .then(() => models.invalidSessions.create({ userId: user.id }))
+    .catch(err => {
+      throw errors.databaseError(err);
+    });
+
 module.exports = {
   signUp,
   findByEmail,
   listAllUsers,
-  updateUser
+  updateUser,
+  invalidateAllSessions
 };

@@ -34,9 +34,18 @@ const getUserAlbums = (req, res, next) => {
     .catch(next);
 };
 
+const invalidateAllSessions = (req, res, next) => {
+  const user = req.decodedValue;
+  return usersService
+    .invalidateAllSessions(user)
+    .then(result => res.send(result))
+    .catch(next);
+};
+
 module.exports = {
   signUp,
   signIn,
   listAllUsers,
-  getUserAlbums
+  getUserAlbums,
+  invalidateAllSessions
 };
