@@ -38,7 +38,7 @@ const invalidateAllSessions = (req, res, next) => {
   const user = req.decodedValue;
   return usersService
     .invalidateAllSessions(user)
-    .then(result => res.send(result))
+    .then(result => res.send(serializers.invalidateAllSessions(result)))
     .catch(next);
 };
 

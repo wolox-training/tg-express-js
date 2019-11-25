@@ -45,10 +45,20 @@ const userAlbums = userAlbumsData => ({
   }))
 });
 
+const invalidateAllSessions = result => ({
+  invalid_session: {
+    id: result.id,
+    user_id: result.userId,
+    created_at: result.createdAt,
+    updated_at: result.updatedAt
+  }
+});
+
 module.exports = {
   signInRequest,
   signUpRequest,
   signUpResponse,
   userList,
+  invalidateAllSessions,
   userAlbums
 };
