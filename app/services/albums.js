@@ -5,7 +5,12 @@ const models = require('../models');
 
 const base_uri = config.common.api.jsonPlaceholderBaseUri;
 
-const options = {};
+const options = {
+  headers: {
+    'User-Agent': 'Request-Promise',
+    'Content-Type': 'application/json'
+  }
+};
 
 const listAlbums = () => {
   options.uri = `${base_uri}/albums`;
