@@ -3,13 +3,13 @@ const { factory } = require('factory-girl');
 const bcrypt = require('bcrypt');
 const app = require('../../app');
 const models = require('../../app/models/index');
-const { factoryByModel } = require('../factory/factory_by_models');
+const { factoryAllModels } = require('../factory/factory_by_models');
 
-factoryByModel('users');
+factoryAllModels();
 factory.extend(
   'users',
   'woloxUser',
-  { email: factory.seq('User.email', n => `test${n}@wolox.com.ar`) },
+  { email: factory.seq('User.email', n => `test${n}@wolox.com.ar`), password: '123456789' },
   {
     afterBuild: model =>
       bcrypt.hash(model.password, 10).then(hash => {
@@ -18,6 +18,11 @@ factory.extend(
       })
   }
 );
+
+factory.extend('userAlbums', 'userAlbumAssoc', {
+  userId: factory.assoc('users', 'id'),
+  albumId: factory.assoc('albums', 'id')
+});
 
 const request = supertest(app);
 
@@ -187,4 +192,61 @@ describe('usersController.listAllUsers', () => {
       .set('Authorization', 'Bearer asdfasdfsf')
       .expect(401)
       .end(done));
+});
+
+describe('usersController.listUserAlbums', () => {
+  it('lists user albums for a non admin user', () => {
+    createAndSignInUser().then(({ createdUser, token }) =>
+      factory.createMany('userAlbumAssoc', 3, { userId: createdUser.id }).then(userAlbums => {
+        const uri = `/users/${createdUser.id}/albums`;
+        return request
+          .get(uri)
+          .set('Authorization', token)
+          .expect(200)
+          .then(response => {
+            expect(response.body).toHaveProperty('user_albums');
+            const responseUserAlbums = response.body.user_albums;
+            expect(responseUserAlbums.length).toBe(userAlbums.length);
+            return responseUserAlbums.forEach(responseUserAlbum => {
+              expect(responseUserAlbum).toHaveProperty('title');
+              expect(responseUserAlbum).toHaveProperty('created_at');
+              return expect(responseUserAlbum).toHaveProperty('updated_at');
+            });
+          });
+      })
+    );
+  });
+
+  it("lists another user's albums for an admin user", () =>
+    createAndSignInUser({ isAdmin: true }).then(({ token }) =>
+      factory.create('woloxUser').then(otherUser =>
+        factory.createMany('userAlbumAssoc', 3, { userId: otherUser.id }).then(userAlbums => {
+          const uri = `/users/${otherUser.id}/albums`;
+          return request
+            .get(uri)
+            .set('Authorization', token)
+            .expect(200)
+            .then(response => {
+              expect(response.body).toHaveProperty('user_albums');
+              const responseUserAlbums = response.body.user_albums;
+              expect(responseUserAlbums.length).toBe(userAlbums.length);
+              return responseUserAlbums.forEach(responseUserAlbum => {
+                expect(responseUserAlbum).toHaveProperty('title');
+                expect(responseUserAlbum).toHaveProperty('created_at');
+                return expect(responseUserAlbum).toHaveProperty('updated_at');
+              });
+            });
+        })
+      )
+    ));
+
+  it("fails due to a non admin user requesting other user's albums", () =>
+    createAndSignInUser({ isAdmin: false }).then(({ createdUser, token }) => {
+      const otherUserId = createdUser.id + 1;
+      const uri = `/users/${otherUserId}/albums`;
+      return request
+        .get(uri)
+        .set('Authorization', token)
+        .expect(401);
+    }));
 });
