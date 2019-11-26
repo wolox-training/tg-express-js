@@ -17,10 +17,8 @@ module.exports = (req, res, next) => {
 
     const iatDate = moment(decode.iat * 1000);
     return models.invalidSessions.findOne({ where: { userId: decode.payload.id } }).then(foundSession => {
-      if (foundSession) {
-        if (foundSession.createdAt > iatDate) {
-          return next(errors.invalidSessionError('User session is invalid'));
-        }
+      if (foundSession && foundSession.createdAt > iatDate) {
+        return next(errors.invalidSessionError('User session is invalid'));
       }
 
       logger.info(`Authenticated! Decoded value: ${decode.payload}`);
