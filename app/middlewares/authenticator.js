@@ -1,3 +1,4 @@
+const moment = require('moment');
 const jwt = require('jsonwebtoken');
 const config = require('../../config');
 const errors = require('../errors');
@@ -14,7 +15,7 @@ module.exports = (req, res, next) => {
       return next(errors.unauthenticatedUserError(err));
     }
 
-    const iatDate = new Date(decode.iat * 1000);
+    const iatDate = moment(decode.iat * 1000);
     return models.invalidSessions.findOne({ where: { userId: decode.payload.id } }).then(foundSession => {
       if (foundSession) {
         if (foundSession.createdAt > iatDate) {
