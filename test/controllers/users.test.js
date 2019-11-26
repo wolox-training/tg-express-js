@@ -210,7 +210,7 @@ describe('usersController.listUserAlbums', () => {
             return responseUserAlbums.forEach(responseUserAlbum => {
               expect(responseUserAlbum).toHaveProperty('title');
               expect(responseUserAlbum).toHaveProperty('created_at');
-              return expect(responseUserAlbum).toHaveProperty('updated_at');
+              expect(responseUserAlbum).toHaveProperty('updated_at');
             });
           });
       })
@@ -233,7 +233,7 @@ describe('usersController.listUserAlbums', () => {
               return responseUserAlbums.forEach(responseUserAlbum => {
                 expect(responseUserAlbum).toHaveProperty('title');
                 expect(responseUserAlbum).toHaveProperty('created_at');
-                return expect(responseUserAlbum).toHaveProperty('updated_at');
+                expect(responseUserAlbum).toHaveProperty('updated_at');
               });
             });
         })
