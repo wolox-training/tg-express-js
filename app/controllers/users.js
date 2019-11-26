@@ -1,12 +1,32 @@
 const usersService = require('../services/users');
 const serializers = require('../serializers/users');
 const signInInteractor = require('../interactors/sign_in');
+const mailer = require('../helpers/mailer');
+const logger = require('../logger');
+
+const signUpEmailOptions = user => ({
+  from: 'notifications@tagexpressjs.com',
+  to: user.email,
+  subject: 'Welcome to your new account!',
+  text: `Hi ${user.firstName}, welcome to your account!`
+});
+
+const signUpEmailHandler = (error, info) => {
+  if (error) {
+    logger.error('Error sending email');
+  } else {
+    logger.info(`Email sent: ${info.response}`);
+  }
+};
 
 const signUp = (req, res, next) => {
   const { user } = req.body;
   return usersService
     .signUp(serializers.signUpRequest(user))
-    .then(createdUser => res.send(serializers.signUpResponse(createdUser)))
+    .then(createdUser => {
+      mailer.sendMail(signUpEmailOptions(createdUser), signUpEmailHandler);
+      return res.send(serializers.signUpResponse(createdUser));
+    })
     .catch(next);
 };
 
