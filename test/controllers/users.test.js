@@ -277,12 +277,7 @@ describe('usersController.invalidateAllSessions', () => {
         .set('Authorization', token)
         .expect(200)
         .then(response => {
-          expect(response.body).toHaveProperty('invalid_session');
-          const responseInvalidSession = response.body.invalid_session;
-          expect(responseInvalidSession).toHaveProperty('id');
-          expect(responseInvalidSession).toHaveProperty('user_id', createdUser.id);
-          expect(responseInvalidSession).toHaveProperty('created_at');
-          return expect(responseInvalidSession).toHaveProperty('updated_at');
+          expect(response.body).toHaveProperty('success', true);
         })
         .then(() =>
           models.invalidSessions

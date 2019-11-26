@@ -46,8 +46,11 @@ const listAllUsers = (page, limit) =>
 
 const invalidateAllSessions = user =>
   models.invalidSessions
-    .destroy({ where: { userId: user.id } })
-    .then(() => models.invalidSessions.create({ userId: user.id }))
+    .upsert({ userId: user.id }, { returning: true })
+    .then(() => ({
+      success: true,
+      message: 'All sessions where successfully invalidated'
+    }))
     .catch(err => {
       throw errors.databaseError(err);
     });
