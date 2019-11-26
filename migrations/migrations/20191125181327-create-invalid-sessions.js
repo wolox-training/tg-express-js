@@ -2,15 +2,10 @@
 module.exports = {
   up: (queryInterface, Sequelize) =>
     queryInterface.createTable('invalid_sessions', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
-      },
       user_id: {
         allowNull: false,
         type: Sequelize.INTEGER,
+        primaryKey: true,
         references: {
           model: 'users',
           key: 'id'
