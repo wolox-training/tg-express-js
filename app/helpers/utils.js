@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const errors = require('../errors');
-const config = require('../../config');
+const config = require('../../config').common.session;
 const { DEFAULT_PAGE, DEFAULT_LIMIT } = require('./constants');
 const logger = require('../logger');
 
@@ -15,9 +15,11 @@ const hash = str => {
 const comparePassword = bcrypt.compare;
 
 const createToken = payload => {
-  const token = jwt.sign({ payload }, config.common.session.secret, { expiresIn: '24h' });
+  const token = jwt.sign({ payload }, config.secret, {
+    expiresIn: config.expiresIn
+  });
 
-  jwt.verify(token, config.common.session.secret, (err, decode) => {
+  jwt.verify(token, config.secret, (err, decode) => {
     const expirationDate = new Date(decode.exp * 1000);
     logger.info(`Created token will expire at ${expirationDate}`);
   });

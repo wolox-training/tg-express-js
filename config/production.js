@@ -6,7 +6,8 @@ exports.config = {
     },
 
     session: {
-      secret: process.env.SESSION_SECRET
+      secret: process.env.SESSION_SECRET,
+      expiresIn: process.env.SESSION_EXPIRES_IN
     }
   },
   isProduction: true
