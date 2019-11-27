@@ -1,3 +1,4 @@
+const moment = require('moment');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const errors = require('../errors');
@@ -19,10 +20,11 @@ const createToken = payload => {
     expiresIn: config.expiresIn
   });
 
-  jwt.verify(token, config.secret, (err, decode) => {
-    const expirationDate = new Date(decode.exp * 1000);
-    logger.info(`Created token will expire at ${expirationDate}`);
-  });
+  const amountOfTime = parseInt(config.expiresIn.match(/([0-9])+/g)[0]);
+  const unitOfTime = config.expiresIn.match(/[a-z]+/g)[0];
+
+  const expirationDate = moment().add(amountOfTime, unitOfTime);
+  logger.info(`Created token will expire at ${expirationDate}`);
 
   return {
     success: true,
