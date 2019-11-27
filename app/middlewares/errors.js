@@ -15,6 +15,7 @@ const statusCodes = {
   [errors.EXTERNAL_API_ERROR]: 404,
   [errors.ALBUM_BOUGHT_BY_USER_ERROR]: 409,
   [errors.UNAUTHORIZED_ERROR]: 401,
+  [errors.INVALID_SESSION_ERROR]: 401,
   [errors.DEFAULT_ERROR]: 500
 };
 

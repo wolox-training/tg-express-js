@@ -130,6 +130,23 @@ describe('usersController.signIn', () => {
       .expect(409)
       .end(done);
   });
+
+  it('fails due to invalidated sessions', () =>
+    createAndSignInUser().then(({ token }) =>
+      request
+        .post('/users/sessions/invalidate_all')
+        .set('Authorization', token)
+        .expect(200)
+        .then(() =>
+          request
+            .get('/users')
+            .set('Authorization', token)
+            .expect(401)
+            .then(response => {
+              expect(response.body).toHaveProperty('internal_code', 'invalid_session_error');
+            })
+        )
+    ));
 });
 
 describe('usersController.listAllUsers', () => {
@@ -248,5 +265,24 @@ describe('usersController.listUserAlbums', () => {
         .get(uri)
         .set('Authorization', token)
         .expect(401);
+    }));
+});
+
+describe('usersController.invalidateAllSessions', () => {
+  it('creates an invalid session in the invalid sessions table', () =>
+    createAndSignInUser().then(({ createdUser, token }) => {
+      const uri = '/users/sessions/invalidate_all';
+      return request
+        .post(uri)
+        .set('Authorization', token)
+        .expect(200)
+        .then(response => {
+          expect(response.body).toHaveProperty('success', true);
+        })
+        .then(() =>
+          models.invalidSessions
+            .findAll({ where: { userId: createdUser.id } })
+            .then(invalidSessions => expect(invalidSessions.length).toBe(1))
+        );
     }));
 });

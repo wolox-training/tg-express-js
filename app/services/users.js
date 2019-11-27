@@ -44,9 +44,21 @@ const listAllUsers = (page, limit) =>
     throw errors.databaseError(err);
   });
 
+const invalidateAllSessions = user =>
+  models.invalidSessions
+    .upsert({ userId: user.id }, { returning: true })
+    .then(() => ({
+      success: true,
+      message: 'All sessions where successfully invalidated'
+    }))
+    .catch(err => {
+      throw errors.databaseError(err);
+    });
+
 module.exports = {
   signUp,
   findByEmail,
   listAllUsers,
-  updateUser
+  updateUser,
+  invalidateAllSessions
 };
