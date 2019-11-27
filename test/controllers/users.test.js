@@ -1,3 +1,4 @@
+/* eslint max-lines: "off" */
 const supertest = require('supertest');
 const { factory } = require('factory-girl');
 const bcrypt = require('bcrypt');
@@ -42,6 +43,8 @@ const createAndSignInUser = options =>
       .then(response => `Bearer ${response.body.token}`)
       .then(token => ({ createdUser, token }));
   });
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 describe('usersController.signUp', () => {
   it('succeeds and creates a user', () => {
@@ -203,12 +206,28 @@ describe('usersController.listAllUsers', () => {
       )
     ));
 
-  it('fails due to unauthorized access', done =>
+  it('fails due to invalid signature token', done =>
     request
       .get(uri)
       .set('Authorization', 'Bearer asdfasdfsf')
       .expect(401)
       .end(done));
+
+  it('fails due to expired token', () =>
+    createAndSignInUser().then(({ token }) =>
+      sleep(2001).then(() =>
+        request
+          .get(uri)
+          .set('Authorization', token)
+          .expect(401)
+          .then(response => {
+            expect(response.body).toHaveProperty('message');
+            const { message } = response.body;
+            expect(message).toHaveProperty('name', 'TokenExpiredError');
+            expect(message).toHaveProperty('message', 'jwt expired');
+          })
+      )
+    ));
 });
 
 describe('usersController.listUserAlbums', () => {
@@ -266,6 +285,22 @@ describe('usersController.listUserAlbums', () => {
         .set('Authorization', token)
         .expect(401);
     }));
+
+  it('fails due to expired token', () =>
+    createAndSignInUser().then(({ createdUser, token }) =>
+      sleep(2001).then(() =>
+        request
+          .get(`/users/${createdUser.id}/albums`)
+          .set('Authorization', token)
+          .expect(401)
+          .then(response => {
+            expect(response.body).toHaveProperty('message');
+            const { message } = response.body;
+            expect(message).toHaveProperty('name', 'TokenExpiredError');
+            expect(message).toHaveProperty('message', 'jwt expired');
+          })
+      )
+    ));
 });
 
 describe('usersController.invalidateAllSessions', () => {
@@ -285,4 +320,20 @@ describe('usersController.invalidateAllSessions', () => {
             .then(invalidSessions => expect(invalidSessions.length).toBe(1))
         );
     }));
+
+  it('fails due to expired token', () =>
+    createAndSignInUser().then(({ token }) =>
+      sleep(2001).then(() =>
+        request
+          .post('/users/sessions/invalidate_all')
+          .set('Authorization', token)
+          .expect(401)
+          .then(response => {
+            expect(response.body).toHaveProperty('message');
+            const { message } = response.body;
+            expect(message).toHaveProperty('name', 'TokenExpiredError');
+            expect(message).toHaveProperty('message', 'jwt expired');
+          })
+      )
+    ));
 });
