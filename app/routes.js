@@ -7,6 +7,7 @@ const { validateSchemaAndFail } = require('./middlewares/validator');
 const userSchemas = require('./schemas').user;
 const authenticateUser = require('./middlewares/authenticator');
 const adminUsersController = require('./controllers/admin/users');
+const authorizeUser = require('./middlewares/authorizer');
 
 exports.init = app => {
   app.get('/health', healthCheck);
@@ -18,11 +19,13 @@ exports.init = app => {
 
   app.post('/users', [validateSchemaAndFail(userSchemas.signUp)], usersController.signUp);
   app.post('/users/sessions', [validateSchemaAndFail(userSchemas.signIn)], usersController.signIn);
+  app.post('/users/sessions/invalidate_all', [authenticateUser], usersController.invalidateAllSessions);
   app.get(
     '/users',
     [validateSchemaAndFail(userSchemas.listAllUsers), authenticateUser],
     usersController.listAllUsers
   );
+  app.get('/users/:id/albums', [authenticateUser, authorizeUser], usersController.getUserAlbums);
 
   app.post('/admin/users', [validateSchemaAndFail(userSchemas.signUp)], adminUsersController.create);
 };

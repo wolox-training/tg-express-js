@@ -1,6 +1,7 @@
 const usersService = require('../services/users');
 const serializers = require('../serializers/users');
 const signInInteractor = require('../interactors/sign_in');
+const albumsService = require('../services/albums');
 const mailer = require('../helpers/mailer');
 const logger = require('../logger');
 
@@ -45,8 +46,26 @@ const listAllUsers = (req, res, next) => {
     .catch(next);
 };
 
+const getUserAlbums = (req, res, next) => {
+  const userId = req.params.id;
+  return albumsService
+    .findAlbumsForUser(userId)
+    .then(userAlbums => res.send(serializers.userAlbums(userAlbums)))
+    .catch(next);
+};
+
+const invalidateAllSessions = (req, res, next) => {
+  const user = req.decodedValue;
+  return usersService
+    .invalidateAllSessions(user)
+    .then(result => res.send(result))
+    .catch(next);
+};
+
 module.exports = {
   signUp,
   signIn,
-  listAllUsers
+  listAllUsers,
+  getUserAlbums,
+  invalidateAllSessions
 };
