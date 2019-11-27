@@ -13,10 +13,7 @@ module.exports = (sequelize, DataTypes) => {
   );
   Album.associate = models => {
     Album.belongsToMany(models.users, {
-      through: 'userAlbums',
-      as: 'users',
-      foreignKey: 'albumId',
-      otherKey: 'userId'
+      through: models.userAlbums
     });
   };
   return Album;

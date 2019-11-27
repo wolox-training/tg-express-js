@@ -32,3 +32,6 @@ exports.unauthenticatedUserError = message => internalError(message, exports.UNA
 
 exports.ALBUM_BOUGHT_BY_USER_ERROR = 'album_bought_by_user_error';
 exports.albumBoughtByUserError = message => internalError(message, exports.ALBUM_BOUGHT_BY_USER_ERROR);
+
+exports.UNAUTHORIZED_ERROR = 'unauthorized_error';
+exports.unauthorized_error = message => internalError(message, exports.UNAUTHORIZED_ERROR);

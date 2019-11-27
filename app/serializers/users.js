@@ -36,9 +36,19 @@ const userList = ({ count, rows }, page = DEFAULT_PAGE) => ({
   count: rows.length
 });
 
+const userAlbums = userAlbumsData => ({
+  user_albums: userAlbumsData.map(userAlbum => ({
+    album_id: userAlbum.albumId,
+    title: userAlbum.title,
+    created_at: userAlbum.createdAt,
+    updated_at: userAlbum.updatedAt
+  }))
+});
+
 module.exports = {
   signInRequest,
   signUpRequest,
   signUpResponse,
-  userList
+  userList,
+  userAlbums
 };

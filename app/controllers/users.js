@@ -1,6 +1,7 @@
 const usersService = require('../services/users');
 const serializers = require('../serializers/users');
 const signInInteractor = require('../interactors/sign_in');
+const albumsService = require('../services/albums');
 
 const signUp = (req, res, next) => {
   const { user } = req.body;
@@ -25,8 +26,17 @@ const listAllUsers = (req, res, next) => {
     .catch(next);
 };
 
+const getUserAlbums = (req, res, next) => {
+  const userId = req.params.id;
+  return albumsService
+    .findAlbumsForUser(userId)
+    .then(userAlbums => res.send(serializers.userAlbums(userAlbums)))
+    .catch(next);
+};
+
 module.exports = {
   signUp,
   signIn,
-  listAllUsers
+  listAllUsers,
+  getUserAlbums
 };
