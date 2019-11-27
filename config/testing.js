@@ -8,7 +8,7 @@ exports.config = {
 
     session: {
       secret: 'some-super-secret',
-      expiresIn: '1s'
+      expiresIn: '1m'
     }
   }
 };
