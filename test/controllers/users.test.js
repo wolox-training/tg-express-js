@@ -1,12 +1,10 @@
 /* eslint max-lines: "off" */
 const supertest = require('supertest');
-const jwt = require('jsonwebtoken');
 const { factory } = require('factory-girl');
 const bcrypt = require('bcrypt');
 const app = require('../../app');
 const models = require('../../app/models/index');
 const { factoryAllModels } = require('../factory/factory_by_models');
-const config = require('../../config');
 
 factoryAllModels();
 factory.extend(
@@ -216,17 +214,11 @@ describe('usersController.listAllUsers', () => {
       .end(done));
 
   it('fails due to expired token', () =>
-    factory.create('woloxUser').then(user => {
-      const payload = {
-        id: user.id,
-        isAdmin: user.isAdmin,
-        email: user.email
-      };
-      const token = jwt.sign({ payload }, config.common.session.secret, { expiresIn: '100ms' });
-      return sleep(101).then(() =>
+    createAndSignInUser().then(({ token }) =>
+      sleep(2001).then(() =>
         request
           .get(uri)
-          .set('Authorization', `Bearer ${token}`)
+          .set('Authorization', token)
           .expect(401)
           .then(response => {
             expect(response.body).toHaveProperty('message');
@@ -234,8 +226,8 @@ describe('usersController.listAllUsers', () => {
             expect(message).toHaveProperty('name', 'TokenExpiredError');
             expect(message).toHaveProperty('message', 'jwt expired');
           })
-      );
-    }));
+      )
+    ));
 });
 
 describe('usersController.listUserAlbums', () => {
@@ -295,18 +287,11 @@ describe('usersController.listUserAlbums', () => {
     }));
 
   it('fails due to expired token', () =>
-    factory.create('woloxUser').then(user => {
-      const uri = `/users/${user.id}/albums`;
-      const payload = {
-        id: user.id,
-        isAdmin: user.isAdmin,
-        email: user.email
-      };
-      const token = jwt.sign({ payload }, config.common.session.secret, { expiresIn: '100ms' });
-      return sleep(101).then(() =>
+    createAndSignInUser().then(({ createdUser, token }) =>
+      sleep(2001).then(() =>
         request
-          .get(uri)
-          .set('Authorization', `Bearer ${token}`)
+          .get(`/users/${createdUser.id}/albums`)
+          .set('Authorization', token)
           .expect(401)
           .then(response => {
             expect(response.body).toHaveProperty('message');
@@ -314,8 +299,8 @@ describe('usersController.listUserAlbums', () => {
             expect(message).toHaveProperty('name', 'TokenExpiredError');
             expect(message).toHaveProperty('message', 'jwt expired');
           })
-      );
-    }));
+      )
+    ));
 });
 
 describe('usersController.invalidateAllSessions', () => {
@@ -342,18 +327,11 @@ describe('usersController.invalidateAllSessions', () => {
     }));
 
   it('fails due to expired token', () =>
-    factory.create('woloxUser').then(user => {
-      const uri = '/users/sessions/invalidate_all';
-      const payload = {
-        id: user.id,
-        isAdmin: user.isAdmin,
-        email: user.email
-      };
-      const token = jwt.sign({ payload }, config.common.session.secret, { expiresIn: '100ms' });
-      return sleep(101).then(() =>
+    createAndSignInUser().then(({ token }) =>
+      sleep(2001).then(() =>
         request
-          .post(uri)
-          .set('Authorization', `Bearer ${token}`)
+          .post('/users/sessions/invalidate_all')
+          .set('Authorization', token)
           .expect(401)
           .then(response => {
             expect(response.body).toHaveProperty('message');
@@ -361,6 +339,6 @@ describe('usersController.invalidateAllSessions', () => {
             expect(message).toHaveProperty('name', 'TokenExpiredError');
             expect(message).toHaveProperty('message', 'jwt expired');
           })
-      );
-    }));
+      )
+    ));
 });
